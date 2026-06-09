@@ -3,7 +3,7 @@
 A customized fork of GrimnatorAC with enhanced anti-cheat capabilities and custom features.
 
 [![Build](https://img.shields.io/badge/build-passing-brightgreen?style=flat&logo=github)](https://github.com/GrimnatorAC/GrimnatorAC)
-[![Minecraft](https://img.shields.io/badge/minecraft-1.8--1.21+-blue?style=flat&logo=minecraft)](https://github.com/GrimnatorAC/GrimnatorAC)
+[![Minecraft](https://img.shields.io/badge/minecraft-1.21+-blue?style=flat&logo=minecraft)](https://github.com/GrimnatorAC/GrimnatorAC)
 [![License](https://img.shields.io/badge/license-GPL--3.0-orange?style=flat)](LICENSE)
 
 ## 🚀 Custom Features
