@@ -84,18 +84,6 @@ Strikes persist across server restarts in `plugins/GrimnatorAC/mod_strikes.txt`
 
 ### Update Checker
 
-The update checker runs automatically on server startup. To configure it for your fork:
-
-1. Edit `bukkit/src/main/java/com/grimnatorac/platform/bukkit/utils/UpdateChecker.java`
-2. Set your GitHub details:
-   ```java
-   private static final String GITHUB_USER = "your-username";
-   private static final String GITHUB_REPO = "your-repo-name";
-   private static final String JAR_NAME = "GrimnatorAC.jar";
-   ```
-3. Rebuild and create GitHub releases
-
-**See [UPDATE_CHECKER_SETUP.md](UPDATE_CHECKER_SETUP.md) for detailed setup instructions.**
 
 ## 🛠️ Building From Source
 
@@ -107,8 +95,8 @@ The update checker runs automatically on server startup. To configure it for you
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
+git clone https://github.com/baybimposeti-crypto/grimnatorAC
+cd grimnatorAC
 
 # Build with ProGuard obfuscation
 gradlew.bat obfuscate
@@ -121,18 +109,16 @@ The compiled `.jar` will be in `bukkit/build/libs/`
 
 ## 📚 Documentation
 
-- **Original GrimnatorAC Wiki**: [GitHub Wiki](https://github.com/GrimnatorAC/GrimnatorAC/wiki)
-- **Update Checker Setup**: [UPDATE_CHECKER_SETUP.md](UPDATE_CHECKER_SETUP.md)
-- **FAQ**: [Original FAQ](https://github.com/GrimnatorAC/GrimnatorAC/wiki/FAQ)
+- **Original GrimnatorAC Wiki**: soon(like in maybe 2 years on a good day)
 
 ## 🎮 Supported Minecraft Versions
 
 | Version Range | Support Status |
 |---------------|----------------|
-| 1.8 - 1.12.2  | ✅ Full Support |
-| 1.13 - 1.16.5 | ✅ Full Support |
-| 1.17 - 1.20.6 | ✅ Full Support |
-| 1.21+         | ✅ Full Support |
+| 1.8 - 1.12.2  |  no Support |
+| 1.13 - 1.16.5 |  no Support |
+| 1.17 - 1.20.6 |  no Support |
+| 1.21+         | ✅ Full Support(will push more releases) |
 
 **Note**: Geyser/Bedrock players are automatically exempted to prevent false positives.
 
@@ -181,24 +167,18 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## 🙏 Credits
 
-- **Original GrimnatorAC**: [GrimnatorAC/GrimnatorAC](https://github.com/GrimnatorAC/GrimnatorAC)
+- **Original GrimAC**: [GrimAC/GrimAC](https://github.com/GrimAnticheat/Grim)
 - **Translation Key Detection**: Inspired by CheatDetector methodology
 - **Custom Features**: Developed by the fork maintainer
 
-## 📞 Support
-
-- **Issues**: [GitHub Issues](../../issues)
-- **Discussions**: [GitHub Discussions](../../discussions)
-- **Original Discord**: [discord.grim.ac](https://discord.grim.ac) *(for upstream issues only)*
-
 ## ⚠️ Disclaimer
 
-This is a custom fork and is not officially supported by the GrimnatorAC team. For official support, please refer to the [original GrimnatorAC repository](https://github.com/GrimnatorAC/GrimnatorAC).
+This is a custom fork and is not officially supported by the GrimAC team. For official support, please refer to the [original GrimAC repository](https://github.com/GrimAnticheat/Grim).
 
 ---
 
 <div align="center">
   <b>Made with ❤️ by the community</b>
   <br>
-  <sub>Based on GrimnatorAC - The open-source Minecraft anticheat</sub>
+  <sub>Based on GrimAC - The open-source Minecraft anticheat</sub>
 </div>
