@@ -153,12 +153,12 @@ public class KillAuraSync extends Check implements PacketCheck {
         // Check if rotation is significant
         if (magnitude >= minRotationMagnitude) {
             long now = System.currentTimeMillis();
-            
+
             // Check if we had a static period between last attack and this rotation
             if (lastAttackTime > 0 && lastRotationTime > 0) {
                 long timeSinceAttack = now - lastAttackTime;
                 long timeSinceLastRotation = now - lastRotationTime;
-                
+
                 // If we had a long period with no significant rotations after the last attack,
                 // this is suspicious (static camera between attacks)
                 if (timeSinceAttack >= minStaticMs && timeSinceLastRotation >= minStaticMs) {
@@ -170,7 +170,7 @@ public class KillAuraSync extends Check implements PacketCheck {
                 // First rotation in sequence
                 hadSignificantRotation = true;
             }
-            
+
             lastRotationTime = now;
         }
     }

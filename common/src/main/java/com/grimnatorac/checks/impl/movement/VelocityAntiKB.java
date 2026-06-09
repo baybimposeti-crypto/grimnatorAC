@@ -172,7 +172,7 @@ public class VelocityAntiKB extends Check implements PostPredictionCheck {
                         violationCount, violationWindowTicks, reductionPercent, predictedMag, actualMag
                 );
                 flagAndAlert(verbose);
-                
+
                 // Reset history to avoid spam
                 historyCount = 0;
                 historyIndex = 0;

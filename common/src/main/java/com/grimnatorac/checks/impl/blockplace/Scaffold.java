@@ -1,13 +1,11 @@
 package com.grimnatorac.checks.impl.blockplace;
 
 import ac.grim.grimac.api.config.ConfigManager;
-import com.grimnatorac.checks.Check;
 import com.grimnatorac.checks.CheckData;
 import com.grimnatorac.checks.type.BlockPlaceCheck;
 import com.grimnatorac.player.GrimPlayer;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
 
 /**
@@ -198,7 +196,7 @@ public class Scaffold extends BlockPlaceCheck {
                     isMoving ? " +moving" : ""
             );
             flagAndAlert(verbose);
-            
+
             // Reset to avoid spam
             placementCount = 0;
             placementIndex = 0;

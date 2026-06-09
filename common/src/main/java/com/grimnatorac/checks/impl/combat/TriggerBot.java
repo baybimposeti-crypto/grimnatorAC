@@ -1,7 +1,6 @@
 package com.grimnatorac.checks.impl.combat;
 
 import ac.grim.grimac.api.config.ConfigManager;
-import com.grimnatorac.GrimAPI;
 import com.grimnatorac.checks.Check;
 import com.grimnatorac.checks.CheckData;
 import com.grimnatorac.checks.type.PacketCheck;
@@ -12,7 +11,6 @@ import com.grimnatorac.utils.math.Vector3dm;
 import com.grimnatorac.utils.nmsutil.ReachUtils;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientAttack;

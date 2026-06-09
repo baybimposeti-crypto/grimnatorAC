@@ -1,7 +1,6 @@
 package com.grimnatorac.checks.impl.misc;
 
 import ac.grim.grimac.api.config.ConfigManager;
-import com.grimnatorac.GrimAPI;
 import com.grimnatorac.checks.Check;
 import com.grimnatorac.checks.CheckData;
 import com.grimnatorac.checks.type.BlockBreakCheck;
@@ -13,7 +12,6 @@ import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Set;
 
 /**
  * XRayAlert — statistical xray detection via ore-find rate analysis.

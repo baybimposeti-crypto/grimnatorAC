@@ -3,17 +3,17 @@ import versioning.BuildConfig
 
 plugins {
     `maven-publish`
-    grim.`base-conventions`
-    grim.`shadow-conventions`
+    grimnatorac.`base-conventions`
+    grimnatorac.`shadow-conventions`
     id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
     id("xyz.jpenilla.run-paper") version "3.0.0-beta.1"
 }
 
+val proguardClasspath: Configuration by configurations.creating
+
 repositories {
-    // 1. Fallback for non-exclusive deps (e.g. Maven Central deps)
     if (BuildConfig.mavenLocalOverride) mavenLocal()
 
-    // 2. Exclusive Repositories (One HTTP request per dep)
     exclusive("https://repo.papermc.io/repository/maven-public/", { name = "papermc" }) {
         includeGroup("io.papermc.paper")
         includeGroup("net.md-5")
@@ -39,13 +39,14 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
+    proguardClasspath("com.guardsquare:proguard-base:7.9.1")
+
     compileOnly(libs.paper.api)
     compileOnly(libs.placeholderapi)
 
     if (BuildConfig.shadePE) {
-        implementation(libs.packetevents.spigot)
+         implementation(libs.packetevents.spigot)
     } else {
         compileOnly(libs.packetevents.spigot)
     }
@@ -55,12 +56,16 @@ dependencies {
 
     implementation(project(":common"))
     shadow(project(":common"))
+
+    // Test dependencies
+    testImplementation(testlibs.junitJupiter)
+    testRuntimeOnly(testlibs.junitPlatformLauncher)
 }
 
 bukkit {
-    name = "GrimAC"
-    author = "GrimAC"
-    main = "ac.grim.grimac.platform.bukkit.GrimACBukkitLoaderPlugin"
+    name = "GrimnatorAC"
+    author = "GrimnatorAC"
+    main = "com.grimnatorac.platform.bukkit.GrimnatorACBukkitLoaderPlugin"
     website = "https://grim.ac/"
     apiVersion = "1.13"
     foliaSupported = true
@@ -80,8 +85,6 @@ bukkit {
         "floodgate",
         "FastLogin",
         "PlaceholderAPI",
-        // Driver holder mods — softdepend so each backend's driver class
-        // resolves through the linked classloader.
         "sqlite-jdbc",
         "mysql-jdbc",
         "postgresql-jdbc",
@@ -89,74 +92,70 @@ bukkit {
         "jedis",
     )
 
+    commands {
+        register("exploitcheck") {
+            description = "Manually trigger Translation Key Probe exploit detection"
+            usage = "/exploitcheck"
+            permission = "grimnatorac.exploitcheck"
+        }
+    }
+
     permissions {
-        register("grim.alerts") {
+        register("grimnatorac.exploitcheck") {
+            description = "Use /exploitcheck command to manually test probe"
+            default = Permission.Default.OP
+        }
+        register("grimnatorac.alerts") {
             description = "Receive alerts for violations"
             default = Permission.Default.OP
         }
-
-        register("grim.alerts.enable-on-join") {
-            description = "Enable alerts on join"
+        register("grimnatorac.alerts.enable-on-join") {
+             description = "Enable alerts on join"
             default = Permission.Default.OP
         }
-
-        register("grim.performance") {
+        register("grimnatorac.performance") {
             description = "Check performance metrics"
             default = Permission.Default.OP
         }
-
-        register("grim.profile") {
-            description = "Check user profile"
+        register("grimnatorac.profile") {
+             description = "Check user profile"
             default = Permission.Default.OP
         }
-
-        register("grim.brand") {
+        register("grimnatorac.brand") {
             description = "Show client brands on join"
             default = Permission.Default.OP
         }
-
-        register("grim.brand.enable-on-join") {
-            description = "Enable showing client brands on join"
+        register("grimnatorac.brand.enable-on-join") {
+             description = "Enable showing client brands on join"
             default = Permission.Default.OP
         }
-
-        register("grim.sendalert") {
+        register("grimnatorac.sendalert") {
             description = "Send cheater alert"
             default = Permission.Default.OP
         }
-
-        register("grim.nosetback") {
+        register("grimnatorac.nosetback") {
             description = "Disable setback"
             default = Permission.Default.FALSE
         }
-
-        register("grim.nomodifypacket") {
+        register("grimnatorac.nomodifypacket") {
             description = "Disable modifying packets"
             default = Permission.Default.FALSE
         }
-
-        register("grim.exempt") {
-            description = "Exempt from all checks"
-            default = Permission.Default.FALSE
+        register("grimnatorac.exempt") {
+             default = Permission.Default.FALSE
         }
-
-        register("grim.verbose") {
+        register("grimnatorac.verbose") {
             description = "Receive verbose alerts for violations"
             default = Permission.Default.OP
         }
-
-        register("grim.verbose.enable-on-join") {
-            description =
-                "Enable verbose alerts on join"
+        register("grimnatorac.verbose.enable-on-join") {
+            description = "Enable verbose alerts on join"
             default = Permission.Default.FALSE
         }
-
-        register("grim.list") {
-            description =
-                "Shows lists of specific data"
+        register("grimnatorac.list") {
+            description = "Shows lists of specific data"
             default = Permission.Default.FALSE
         }
-
     }
 }
 
@@ -165,6 +164,10 @@ publishing.publications.create<MavenPublication>("maven") {
 }
 
 tasks {
+    test {
+        useJUnitPlatform()
+    }
+
     runServer {
         val javaToolchains = project.extensions.getByType<JavaToolchainService>()
         javaLauncher = javaToolchains.launcherFor {
@@ -177,9 +180,43 @@ tasks {
 
     shadowJar {
         exclude("META-INF/services/javax.annotation.processing.Processor")
-
         manifest {
             attributes["paperweight-mappings-namespace"] = "mojang"
         }
+    }
+
+    register<JavaExec>("obfuscate") {
+        dependsOn(shadowJar)
+
+        classpath(proguardClasspath)
+        mainClass.set("proguard.ProGuard")
+
+        val inputJar = shadowJar.get().archiveFile.get().asFile.absolutePath
+        val outputJar = layout.buildDirectory.file("libs/${project.name}-${project.version}-obfuscated.jar").get().asFile.absolutePath
+        val javaHome = System.getProperty("java.home")
+
+        val argsList = mutableListOf(
+            "-injars", inputJar,
+            "-outjars", outputJar,
+            "-libraryjars", "$javaHome/jmods"
+        )
+
+        // BURASI DÜZELDİ: Tüm kütüphaneler yerine sadece compileOnly olan (Paper API vb.)
+        // dış kütüphaneleri süzüp ProGuard'a library olarak paslıyoruz.
+        val compileLibs = configurations.compileClasspath.get().files
+        val runtimeLibs = configurations.runtimeClasspath.get().files
+        val trulyExternalLibs = compileLibs - runtimeLibs
+
+        trulyExternalLibs.forEach { file ->
+            if (file.exists() && file.extension == "jar") {
+                argsList.add("-libraryjars")
+                argsList.add(file.absolutePath)
+            }
+        }
+
+        argsList.add("-include")
+        argsList.add("proguard-rules.pro")
+
+        args(argsList)
     }
 }

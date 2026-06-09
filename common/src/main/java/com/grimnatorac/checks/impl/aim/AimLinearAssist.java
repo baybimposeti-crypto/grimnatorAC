@@ -110,7 +110,7 @@ public class AimLinearAssist extends Check implements RotationCheck, PacketCheck
     @Override
     public void process(final RotationUpdate rotationUpdate) {
         if (player.disableGrim) return;
-        
+
         // Skip teleports and vehicle riding
         if (player.packetStateData.lastPacketWasTeleport
                 || player.packetStateData.lastPacketWasOnePointSeventeenDuplicate
@@ -119,8 +119,8 @@ public class AimLinearAssist extends Check implements RotationCheck, PacketCheck
             return;
         }
 
-        float currentYaw   = rotationUpdate.getTo().getYaw();
-        float currentPitch = rotationUpdate.getTo().getPitch();
+        float currentYaw   = rotationUpdate.getTo().yaw();
+        float currentPitch = rotationUpdate.getTo().pitch();
 
         if (Float.isNaN(prevYaw)) {
             prevYaw   = currentYaw;

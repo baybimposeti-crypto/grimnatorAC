@@ -1,6 +1,5 @@
 package com.grimnatorac.platform.bukkit;
 
-import com.grimnatorac.platform.bukkit.utils.reflection.badpackets;
 import com.grimnatorac.GrimAPI;
 import com.grimnatorac.GrimExternalAPI;
 import ac.grim.grimac.api.GrimAPIProvider;
@@ -37,6 +36,7 @@ import com.grimnatorac.platform.bukkit.scheduler.bukkit.BukkitPlatformScheduler;
 import com.grimnatorac.platform.bukkit.scheduler.folia.FoliaPlatformScheduler;
 import com.grimnatorac.platform.bukkit.sender.BukkitSenderFactory;
 import com.grimnatorac.platform.bukkit.utils.placeholder.PlaceholderAPIExpansion;
+import com.grimnatorac.platform.bukkit.utils.UpdateChecker;
 import com.grimnatorac.utils.lazy.LazyHolder;
 import com.github.retrooper.packetevents.PacketEventsAPI;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -70,8 +70,11 @@ public final class GrimnatorACBukkitLoaderPlugin extends JavaPlugin implements P
     @Getter private final MessagePlaceHolderManager messagePlaceHolderManager = new BukkitMessagePlaceHolderManager();
     @Getter private final BukkitPermissionRegistrationManager permissionManager = new BukkitPermissionRegistrationManager();
 
-    /** badpackets instance — owns all event listeners. */
-    private badpackets badpacketsInstance;
+    /** ModDetector instance — detects hacked clients via translation key probing. */
+    private com.grimnatorac.platform.bukkit.checks.exploit.ModDetector modDetector;
+
+    /** UpdateChecker instance — checks for updates from GitHub releases. */
+    private UpdateChecker updateChecker;
 
     public GrimnatorACBukkitLoaderPlugin() {
         BukkitResolverRegistrar registrar = new BukkitResolverRegistrar();
@@ -103,21 +106,28 @@ public final class GrimnatorACBukkitLoaderPlugin extends JavaPlugin implements P
     public void onEnable() {
         GrimAPI.INSTANCE.start();
 
+        // Initialize Mod Detection (translation key probing)
         try {
-            badpackets exploit = new badpackets(this);
-            Bukkit.getPluginManager().registerEvents(exploit, this);
-            Bukkit.getScheduler().runTaskAsynchronously(this, exploit);
-            exploit.dsOnServerEnable();
-        } catch (Throwable ignored) {}
+            modDetector = new com.grimnatorac.platform.bukkit.checks.exploit.ModDetector(this);
+            modDetector.enable();
+            getLogger().info("Grim » Mod Detection enabled (translation key probe method)");
+        } catch (Throwable t) {
+            getLogger().severe("Grim » Failed to enable Mod Detection: " + t.getMessage());
+            t.printStackTrace();
+        }
+
+        // Check for updates from GitHub releases
+        try {
+            updateChecker = new UpdateChecker(this);
+            // Run after 3 second delay to avoid startup lag
+            Bukkit.getScheduler().runTaskLater(this, () -> updateChecker.checkForUpdates(), 60L);
+        } catch (Throwable t) {
+            getLogger().warning("Grim » Failed to initialize Update Checker: " + t.getMessage());
+        }
     }
 
     @Override
     public void onDisable() {
-        try {
-            // server-stop webhook — create a temporary instance just to send the notification
-            new badpackets(this).dsOnServerDisable();
-        } catch (Throwable ignored) {}
-
         GrimAPI.INSTANCE.stop();
     }
 
@@ -222,5 +232,9 @@ public final class GrimnatorACBukkitLoaderPlugin extends JavaPlugin implements P
 
     public BukkitSenderFactory getBukkitSenderFactory() {
         return senderFactory.get();
+    }
+
+    public com.grimnatorac.platform.bukkit.checks.exploit.ModDetector getModDetector() {
+        return modDetector;
     }
 }

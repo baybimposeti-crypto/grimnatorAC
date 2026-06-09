@@ -135,15 +135,15 @@ jobs:
             - name: Upload Bukkit Artifact
               uses: actions/upload-artifact@v6
               with:
-                  name: grimac-bukkit
-                  path: ${{ github.workspace }}/bukkit/build/libs/grimac-bukkit-${{ env.BUILD_VERSION }}.jar
+                  name: GrimnatorAC-bukkit
+                  path: ${{ github.workspace }}/bukkit/build/libs/GrimnatorAC-bukkit-${{ env.BUILD_VERSION }}.jar
                   if-no-files-found: error
 
             - name: Upload Fabric Artifact
               uses: actions/upload-artifact@v6
               with:
-                  name: grimac-fabric
-                  path: ${{ github.workspace }}/fabric/build/libs/grimac-fabric-${{ env.BUILD_VERSION }}.jar
+                  name: GrimnatorAC-fabric
+                  path: ${{ github.workspace }}/fabric/build/libs/GrimnatorAC-fabric-${{ env.BUILD_VERSION }}.jar
                   if-no-files-found: error
 
             #------------------------------------------------------------------
@@ -259,7 +259,7 @@ jobs:
                   modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
                   modrinth-featured: ${{ inputs.is-release-build }} # Only feature release builds
 
-                  files: fabric/build/libs/grimac-fabric-${{ env.BUILD_VERSION }}.jar
+                  files: fabric/build/libs/GrimnatorAC-fabric-${{ env.BUILD_VERSION }}.jar
                   name: Grim Anticheat (Fabric) ${{ env.BUILD_VERSION }}
                   version: ${{ env.BUILD_VERSION }}
                   version-type: ${{ inputs.release-version-type }}
@@ -280,7 +280,7 @@ jobs:
                   modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
                   modrinth-featured: ${{ inputs.is-release-build }} # Only feature release builds
 
-                  files: bukkit/build/libs/grimac-bukkit-${{ env.BUILD_VERSION }}.jar
+                  files: bukkit/build/libs/GrimnatorAC-bukkit-${{ env.BUILD_VERSION }}.jar
                   name: Grim Anticheat (Bukkit) ${{ env.BUILD_VERSION }}
                   version: ${{ env.BUILD_VERSION }}
                   version-type: ${{ inputs.release-version-type }}
@@ -298,7 +298,7 @@ jobs:
               run: |
                   curl -X POST \
                     -H "Content-Type: application/json" \
-                    -H "User-Agent: GrimACBuilder/v1" \
+                    -H "User-Agent: GrimnatorACBuilder/v1" \
                     -H "Authorization: Bearer ${{ secrets.BUILD_UPDATE_TOKEN }}" \
                     -d '{"org": "${{ github.repository_owner }}", "repository": "${{ github.event.repository.name }}", "branch": "${{ github.ref_name }}", "version": "${{ env.BUILD_VERSION }}"}' \
                     "${{ secrets.BUILD_UPDATE_URL }}"
@@ -308,7 +308,7 @@ jobs:
               run: |
                   curl -X POST \
                     -H "Content-Type: application/json" \
-                    -H "User-Agent: GrimACBuilder/v1" \
+                    -H "User-Agent: GrimnatorACBuilder/v1" \
                     -H "Authorization: Bearer ${{ secrets.BUILD_UPDATE_TOKEN }}" \
                     -d '{"org": "${{ github.repository_owner }}", "repository": "${{ github.event.repository.name }}", "branch": "release", "version": "${{ env.BUILD_VERSION }}"}' \
                     "${{ secrets.BUILD_UPDATE_URL }}"

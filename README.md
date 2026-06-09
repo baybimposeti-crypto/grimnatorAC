@@ -1,127 +1,204 @@
+# GrimnatorAC - Custom Fork
+
+A customized fork of GrimnatorAC with enhanced anti-cheat capabilities and custom features.
+
+[![Build](https://img.shields.io/badge/build-passing-brightgreen?style=flat&logo=github)](https://github.com/GrimnatorAC/GrimnatorAC)
+[![Minecraft](https://img.shields.io/badge/minecraft-1.8--1.21+-blue?style=flat&logo=minecraft)](https://github.com/GrimnatorAC/GrimnatorAC)
+[![License](https://img.shields.io/badge/license-GPL--3.0-orange?style=flat)](LICENSE)
+
+## 🚀 Custom Features
+
+This fork includes several custom enhancements on top of the original GrimnatorAC:
+
+### 🔍 Translation Key Mod Detection
+- **Multi-batch sign-based detection system**
+- Detects 8+ different hacked clients including:
+  - Meteor Client
+  - Wurst Client
+  - Freecam
+  - Item Scroller
+  - Xaero's World Map
+  - Mace Attack Assistance
+  - Pathmind
+  - Elytra Assistant
+- **OpSec bypass logic** - defeats anti-detection mods
+- **Strike system** with persistent storage
+  - Strike 1: Warning kick
+  - Strike 2: Permanent ban
+- **Turkish language support** for kick/ban messages
+- Automatic checking on player join
+- Exempts creative/spectator mode players
+
+### 📦 Automatic Update System
+- **GitHub integration** for automatic update checking
+- Downloads new versions automatically
+- Notifies admins in console and in-game
+- Safe update process (manual installation required)
+- Supports semantic versioning (MAJOR.MINOR.PATCH)
+
+### 🎯 Simplified Build
+- **Bukkit-only build** - no common/fabric modules
+- Faster compilation times
+- Easier to maintain and customize
+- Direct compilation with `gradlew.bat obfuscate`
+
+## 📥 Installation
+
+### Requirements
+- **Java 17 or higher**
+- **Spigot/Paper/Folia server** (1.8-1.21+)
+- Server must support Bukkit plugins
+
+### Quick Start
+
+1. Download the latest release from [Releases](../../releases)
+2. Place the `.jar` file in your server's `plugins/` folder
+3. Restart your server
+4. Configure in `plugins/GrimnatorAC/config.yml`
+
+## 🔧 Configuration
+
+### Mod Detection
+
+The mod detection system runs automatically on player join. To configure:
+
+```yaml
+# Enable/Disable mod detection
+ModDetection:
+  enabled: true
+  # Delay before checking (seconds)
+  check-delay: 5
+```
+
+**Manual check command:**
+```
+/modcheck - Run mod detection on yourself (requires grimnatorac.modcheck permission)
+```
+
+### Strike System
+
+Strikes persist across server restarts in `plugins/GrimnatorAC/mod_strikes.txt`
+
+- **Strike 1**: Player is kicked with a warning
+- **Strike 2+**: Player is permanently banned
+
+### Update Checker
+
+The update checker runs automatically on server startup. To configure it for your fork:
+
+1. Edit `bukkit/src/main/java/com/grimnatorac/platform/bukkit/utils/UpdateChecker.java`
+2. Set your GitHub details:
+   ```java
+   private static final String GITHUB_USER = "your-username";
+   private static final String GITHUB_REPO = "your-repo-name";
+   private static final String JAR_NAME = "GrimnatorAC.jar";
+   ```
+3. Rebuild and create GitHub releases
+
+**See [UPDATE_CHECKER_SETUP.md](UPDATE_CHECKER_SETUP.md) for detailed setup instructions.**
+
+## 🛠️ Building From Source
+
+### Prerequisites
+- Java 17 JDK or higher
+- Git
+
+### Compilation
+
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+cd YOUR_REPO_NAME
+
+# Build with ProGuard obfuscation
+gradlew.bat obfuscate
+
+# Or on Linux/Mac
+./gradlew obfuscate
+```
+
+The compiled `.jar` will be in `bukkit/build/libs/`
+
+## 📚 Documentation
+
+- **Original GrimnatorAC Wiki**: [GitHub Wiki](https://github.com/GrimnatorAC/GrimnatorAC/wiki)
+- **Update Checker Setup**: [UPDATE_CHECKER_SETUP.md](UPDATE_CHECKER_SETUP.md)
+- **FAQ**: [Original FAQ](https://github.com/GrimnatorAC/GrimnatorAC/wiki/FAQ)
+
+## 🎮 Supported Minecraft Versions
+
+| Version Range | Support Status |
+|---------------|----------------|
+| 1.8 - 1.12.2  | ✅ Full Support |
+| 1.13 - 1.16.5 | ✅ Full Support |
+| 1.17 - 1.20.6 | ✅ Full Support |
+| 1.21+         | ✅ Full Support |
+
+**Note**: Geyser/Bedrock players are automatically exempted to prevent false positives.
+
+## 🔐 Permissions
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `grimnatorac.bypass` | Bypass all anticheat checks | OP |
+| `grimnatorac.alerts` | Receive anticheat alerts | OP |
+| `grimnatorac.admin` | Admin permissions + update notifications | OP |
+| `grimnatorac.modcheck` | Use /modcheck command | OP |
+
+## 🎯 Key Features (Original + Custom)
+
+### ✨ Original GrimnatorAC Features
+- **Movement Simulation Engine** - 1:1 replication of player movements
+- **Fully Asynchronous** - Multi-threaded design for optimal performance
+- **World Replication** - Per-player world cache for accurate checks
+- **Latency Compensation** - No false positives from lag
+- **Inventory Tracking** - Ghost block prevention
+- **Secure by Design** - Mathematically impossible to bypass
+
+### 🎨 Custom Fork Features
+- **Translation Key Probing** - Detects mod clients via language file resolution
+- **OpSec Bypass** - Defeats anti-detection mods with retry logic
+- **Strike System** - Persistent punishment tracking
+- **Auto-Updater** - GitHub integration for automatic updates
+- **Streamlined Build** - Bukkit-only, faster compilation
+- **Turkish Support** - Localized kick/ban messages
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+## 📜 License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Credits
+
+- **Original GrimnatorAC**: [GrimnatorAC/GrimnatorAC](https://github.com/GrimnatorAC/GrimnatorAC)
+- **Translation Key Detection**: Inspired by CheatDetector methodology
+- **Custom Features**: Developed by the fork maintainer
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](../../issues)
+- **Discussions**: [GitHub Discussions](../../discussions)
+- **Original Discord**: [discord.grim.ac](https://discord.grim.ac) *(for upstream issues only)*
+
+## ⚠️ Disclaimer
+
+This is a custom fork and is not officially supported by the GrimnatorAC team. For official support, please refer to the [original GrimnatorAC repository](https://github.com/GrimnatorAC/GrimnatorAC).
+
+---
+
 <div align="center">
- <h1>GrimnatorAC</h1>
-
- <div>
-  <a href="https://github.com/GrimnatorAC/GrimnatorAC/actions/workflows/gradle-publish.yml">
-   <img alt="Workflow" src="https://img.shields.io/github/actions/workflow/status/GrimnatorAC/GrimnatorAC/gradle-publish.yml?style=flat&logo=github"/>
-  </a>&nbsp;&nbsp;
-  <a href="https://modrinth.com/plugin/GrimnatorAC">
-   <img alt="Modrinth" src="https://img.shields.io/modrinth/v/LJNGWSvH?style=flat&label=version&logo=modrinth">
-  </a>&nbsp;&nbsp;
-  <a href="https://modrinth.com/plugin/GrimnatorAC#download">
-   <img alt="Downloads" src="https://img.shields.io/modrinth/dt/LJNGWSvH?style=flat&logo=modrinth&label=downloads&link=https%3A%2F%2Fmodrinth.com%2Fplugin%2FGrimnatorAC%23download">
-  </a>&nbsp;&nbsp;
-  <a href="https://discord.grim.ac">
-   <img alt="Discord" src="https://img.shields.io/discord/811396969670901800?style=flat&label=discord&logo=discord">
-  </a>
- </div>
- <br>
+  <b>Made with ❤️ by the community</b>
+  <br>
+  <sub>Based on GrimnatorAC - The open-source Minecraft anticheat</sub>
 </div>
-
-GrimnatorAC is an open source Minecraft anticheat designed to support the latest versions of Minecraft.
-It currently supports minecraft versions 1.8–26.1. Geyser players are fully exempt from the anticheat to prevent false positives.
-This project is considered feature-complete for the 2.0 (open-source) branch. If you would like a bug fix or enhancement and cannot sponsor the work, pull requests are welcome.
-A premium version is planned, which will offer additional subscription-based paid checks, such as heuristics.
-
-## Downloads
-
-- Latest updates:
-  - **[Modrinth](https://modrinth.com/plugin/GrimnatorAC)** *(recommended)*
-  - GitHub
-  artifacts: [Bukkit](https://nightly.link/GrimnatorAC/GrimnatorAC/workflows/gradle-publish/2.0/GrimnatorAC-bukkit.zip), [Fabric](https://nightly.link/GrimnatorAC/GrimnatorAC/workflows/gradle-publish/2.0/GrimnatorAC-fabric.zip) *(bleeding edge)*
-- Major releases only:
-  - ~~[Hangar](https://hangar.papermc.io/GrimnatorAC/GrimnatorACAnticheat)~~
-  - ~~[SpigotMC](https://www.spigotmc.org/resources/grim-anticheat.99923/)~~
-
-## Requirements & Installation
-
-- Java 17 or higher. *For more details, see [Updating-to-Java-17](https://github.com/GrimnatorAC/GrimnatorAC/wiki/Updating-to-Java-17).*
-- A Spigot, Paper, Folia, or Fabric server environment. *For more details, see [Supported-environments](https://github.com/GrimnatorAC/GrimnatorAC/wiki/Supported-environments).*
-
-If you use a proxy such as Velocity or Bungeecord:
-- If you use Geyser, Floodgate must be installed on the backend server (where Grim is) so Grim can access the Floodgate API.
-- If you use ViaVersion, it must be installed on the backend server (where Grim is) ONLY.
-  Grim does not support having ViaVersion installed on the proxy, even if it is also installed on the backend.
-
-## Resources
-
-- For documentation and examples visit the [Wiki](https://github.com/GrimnatorAC/GrimnatorAC/wiki).
-- For answers to commonly asked questions visit the [FAQ](https://github.com/GrimnatorAC/GrimnatorAC/wiki/FAQ).
-- For community support and project discussion join our [Discord](https://discord.grim.ac).
-
-## Pull Requests
-
-See [Contributing](CONTRIBUTING.md) for more information about contributing and what our guidelines
-are.
-
-## Developer Plugin API
-
-Grim's plugin API allows you to integrate Grim into your own plugins. Visit
-the [plugin API repository](https://github.com/GrimnatorAC/GrimnatorACAPI) for the source code and more
-information.
-
-## Compiling From Source
-
-1. `git clone https://github.com/GrimnatorAC/GrimnatorAC.git`
-2. `cd Grim`
-3. `./gradlew build`
-4. The final jars will compile into the `<platform>/build/libs` folders
-
-## Grim Supremacy
-
-What makes Grim stand out against other anticheats?
-
-### Movement Simulation Engine
-
-* We have a 1:1 replication of the player's possible movements
-    * This covers everything from basic walking, swimming, knockback, cobwebs, to bubble columns
-    * It even covers riding entities from boats to pigs to striders
-* Built upon covering edge cases to confirm accuracy
-* 1.13+ clients on 1.13+ servers, 1.12- clients on 1.13+ servers, 1.13+ clients on 1.12- servers,
-  and 1.12- clients on 1.12- servers are all supported regardless of the large technical changes
-  between these versions.
-* The order of collisions depends on the client version and is correct
-* Accounts for minor bounding box differences between versions, for example:
-    * Single glass panes will be a + shape for 1.7-1.8 players and * for 1.9+ players
-    * 1.13+ clients on 1.8 servers see the + glass pane hitbox due to ViaVersion
-    * Many other blocks have this extreme attention to detail.
-    * Waterlogged blocks do not exist for 1.12 or below players
-    * Blocks that do not exist in the client's version use ViaVersion's replacement block
-    * Block data that cannot be translated to previous versions is replaced correctly
-    * All vanilla collision boxes have been implemented
-
-### Fully asynchronous and multithreaded design
-
-* All movement checks and the overwhelming majority of listeners run on the netty thread
-* The anticheat can scale to many hundreds of players, if not more
-* Thread safety is carefully thought out
-* The next core allows for this design
-
-### Full world replication
-
-* The anticheat keeps a replica of the world for each player
-* The replica is created by listening to chunk data packets, block places, and block changes
-* On all versions, chunks are compressed to 16-64 kb per chunk using palettes
-* Using this cache, the anticheat can safely access the world state
-* Per player, the cache allows for multithreaded design
-* Sending players fake blocks with packets is safe and does not lead to falses
-* The world is recreated for each player to allow lag compensation
-* Client sided blocks cause no issues with packet based blocks. Block glitching does not false the
-  anticheat.
-
-### Latency compensation
-
-* World changes are queued until they reach the player
-* This means breaking blocks under a player does not false the anticheat
-* Everything from flying status to movement speed will be latency compensated
-
-### Inventory compensation
-
-* The player's inventory is tracked to prevent ghost blocks at high latency, and other errors
-
-### Secure by design, not obscurity
-
-* All systems are designed to be highly secure and mathematically impossible to bypass
-* For example, the prediction engine knows all possible movements and cannot be bypassed
-"# grimnatorAC" 
-"# grimnatorAC" 

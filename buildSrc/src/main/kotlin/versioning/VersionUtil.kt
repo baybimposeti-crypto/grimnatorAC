@@ -3,7 +3,7 @@ package versioning
 import org.gradle.api.Project
 
 /**
- * Utility for computing the version string of GrimAC artifacts.
+ * Utility for computing the version string of GrimnatorAC artifacts.
  *
  * Uses Gradle's providers.exec for git invocations so that
  * org.gradle.configuration-cache=true can serialize the task graph.
