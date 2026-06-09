@@ -1,0 +1,17 @@
+package com.grimnatorac.manager.tick.impl;
+
+import com.grimnatorac.GrimAPI;
+import com.grimnatorac.manager.tick.Tickable;
+import com.grimnatorac.player.GrimPlayer;
+
+public class ClearRecentlyUpdatedBlocks implements Tickable {
+
+    private static final int maxTickAge = 2;
+
+    @Override
+    public void tick() {
+        for (GrimPlayer player : GrimAPI.INSTANCE.getPlayerDataManager().getEntries()) {
+            player.blockHistory.cleanup(GrimAPI.INSTANCE.getTickManager().currentTick - maxTickAge);
+        }
+    }
+}
