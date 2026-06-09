@@ -133,7 +133,7 @@ The compiled `.jar` will be in `bukkit/build/libs/`
 
 ## 🎯 Key Features (Original + Custom)
 
-### ✨ Original GrimnatorAC Features
+### ✨ Original GrimAC Features
 - **Movement Simulation Engine** - 1:1 replication of player movements
 - **Fully Asynchronous** - Multi-threaded design for optimal performance
 - **World Replication** - Per-player world cache for accurate checks
