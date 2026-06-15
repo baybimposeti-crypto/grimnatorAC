@@ -1,0 +1,12 @@
+[versions]
+junit = "5.11.3"
+jqwik = "1.9.2"
+
+
+[libraries]
+junitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher", version = "1.11.3" }
+jqwik = { module = "net.jqwik:jqwik", version.ref = "jqwik" }
+
+
+[bundles]

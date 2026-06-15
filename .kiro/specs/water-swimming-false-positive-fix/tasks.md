@@ -1,0 +1,118 @@
+# Implementation Plan
+
+- [ ] 1. Write bug condition exploration test
+  - **Property 1: Bug Condition** - Swimming Space Does Not Trigger False Positives
+  - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior - it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate the bug exists
+  - **Scoped PBT Approach**: For deterministic bugs, scope the property to concrete failing cases:
+    - Simple upward swimming: player at depth Y=50, looking up (pitch=90), pressing space
+    - Horizontal swimming with space: player swimming horizontally (pitch=0), pressing space
+    - Looking down while swimming: player looking down (pitch=-20), pressing space
+    - Rapid space tapping: player alternates space press each tick
+    - Water surface edge case: player at Y=62.5 swimming upward with space
+  - Test that for swimming inputs with space pressed: `isBugCondition(input) == true AND offset >= threshold AND setbackTriggered(input) == true`
+  - The test assertions should match Expected Behavior: offset < threshold after fix, no setbacks for legitimate swimming
+  - Run test on UNFIXED code
+  - **EXPECTED OUTCOME**: Test FAILS (this is correct - it proves the bug exists)
+  - Document counterexamples found:
+    - Expected: offset values between 0.001 and 0.1
+    - Expected: setbacks triggered repeatedly during continuous space holding
+    - Expected: rubber-banding effect observed
+  - Mark task complete when test is written, run, and failure is documented
+  - _Requirements: 2.1, 2.2_
+
+- [~] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Cheat Detection in Water Remains Effective
+  - **IMPORTANT**: Follow observation-first methodology
+  - Observe behavior on UNFIXED code for non-buggy inputs (cases where `NOT isBugCondition(input)`):
+    - Speed hack detection: players moving faster than allowed swimming speed
+    - Fly hack detection: players hovering in water without proper mechanics
+    - Normal swimming: horizontal, diving, surface swimming without space key
+    - Ground movement: walking, running, jumping on land
+    - Water transitions: entering/exiting water
+  - Write property-based tests capturing observed behavior patterns:
+    - For all speed hack inputs: offset > threshold AND flagged == true (same as original)
+    - For all fly hack inputs: violation detected (same as original)
+    - For all normal swimming inputs (no space): offset values identical to original
+    - For all ground movement inputs: behavior completely unchanged
+    - For all water transition inputs: validation results unchanged
+  - Property-based testing generates many test cases for stronger guarantees
+  - Run tests on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests PASS (this confirms baseline behavior to preserve)
+  - Mark task complete when tests are written, run, and passing on unfixed code
+  - _Requirements: 3.1, 3.2, 3.3, 3.4_
+
+- [ ] 3. Fix for water swimming false positive
+
+  - [~] 3.1 Verify and correct swimming space formula in `transformSwimmingVectors()`
+    - Review the calculation: `newY = oldY + ((lookYAmount - oldY) * scalar)`
+    - Test scalar values (0.085 when lookYAmount < -0.2, otherwise 0.06) against vanilla Minecraft
+    - Test with multiple client versions (1.13+, 1.14+, 1.21+) to ensure compatibility
+    - Add version-specific adjustments if formula differs across versions
+    - Add debug logging to compare predicted vs actual Y velocity, lookYAmount, scalar, and offset
+    - _Bug_Condition: `isBugCondition(input)` where `(input.player.isSwimming OR input.player.wasSwimming) AND input.pressingSpace == true AND offset >= threshold`_
+    - _Expected_Behavior: `offset < threshold` for legitimate swimming space movements_
+    - _Preservation: Speed/fly hack detection, normal swimming, ground movement, water transitions remain unchanged_
+    - _Requirements: 2.1, 2.2, 3.1, 3.2, 3.3, 3.4_
+
+  - [~] 3.2 Add uncertainty tolerance for swimming space movements
+    - Modify `UncertaintyHandler.reduceOffset()` to detect `SwimmingSpace` vector type
+    - Apply small offset reduction (0.01-0.03) for swimming space movements
+    - Provide tolerance for minor calculation differences while detecting major violations
+    - _Bug_Condition: Same as 3.1_
+    - _Expected_Behavior: `uncertaintyHandler.reduceOffset(offset) < threshold` for swimming space_
+    - _Preservation: Offset reduction for non-swimming cases unchanged_
+    - _Requirements: 2.1, 2.2_
+
+  - [~] 3.3 Enhance 0.03 handling for swimming space
+    - Review `addJumpsToPossibilities()` for swimming space with `couldSkipTick`
+    - Add special cases for swimming space + 0.03 tick combinations if needed
+    - Test that swimming space works correctly across tick boundaries
+    - _Bug_Condition: Same as 3.1 with added 0.03 tick skipping_
+    - _Expected_Behavior: No false positives during 0.03 tick skip scenarios_
+    - _Preservation: 0.03 handling for non-swimming movements unchanged_
+    - _Requirements: 2.1, 2.2_
+
+  - [~] 3.4 Verify end-of-tick calculations match client order
+    - Verify `staticVectorEndOfTick()` friction application: `multiply(swimmingFriction, 0.8F, swimmingFriction)`
+    - Verify `FluidFallingAdjustedMovement.getFluidFallingAdjustedMovement()` works correctly with swimming space
+    - Test that friction and gravity are applied in the same order as client
+    - _Bug_Condition: Same as 3.1 with focus on end-of-tick physics_
+    - _Expected_Behavior: Friction and gravity calculations match client behavior_
+    - _Preservation: End-of-tick calculations for non-swimming unchanged_
+    - _Requirements: 2.1, 2.2_
+
+  - [~] 3.5 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - Swimming Space Does Not Trigger False Positives
+    - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
+    - The test from task 1 encodes the expected behavior
+    - When this test passes, it confirms the expected behavior is satisfied
+    - Run bug condition exploration test from step 1
+    - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
+    - Verify that:
+      - Offset values are below threshold (0.001) for legitimate swimming space movements
+      - No setbacks triggered during normal upward swimming with space key
+      - Players can swim smoothly from underwater to surface without rubber-banding
+    - _Requirements: 2.1, 2.2_
+
+  - [~] 3.6 Verify preservation tests still pass
+    - **Property 2: Preservation** - Cheat Detection in Water Remains Effective
+    - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
+    - Run preservation property tests from step 2
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions)
+    - Confirm all preservation tests still pass after fix:
+      - Speed hack detection works with same accuracy
+      - Fly hack detection works with same accuracy
+      - Normal swimming offset calculations unchanged
+      - Ground movement completely unchanged
+      - Water transitions validation unchanged
+    - _Requirements: 3.1, 3.2, 3.3, 3.4_
+
+- [~] 4. Checkpoint - Ensure all tests pass
+  - Run full test suite including bug condition test and preservation tests
+  - Verify no false positives occur during swimming with space key
+  - Verify anticheat still detects speed/fly hacks in water
+  - Remove debug logging added during implementation
+  - Ask the user if questions arise or if additional testing is needed
